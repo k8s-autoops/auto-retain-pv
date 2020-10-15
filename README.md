@@ -1,4 +1,4 @@
-# template-autoops-cronjob
+# auto-retain-pv
 
 ## Usage
 
@@ -9,38 +9,38 @@ Create namespace `autoops` and apply yaml resources as described below.
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: template-autoops-cronjob
+  name: auto-retain-pv
   namespace: autoops
 ---
 # create clusterrole
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
-  name: template-autoops-cronjob
+  name: auto-retain-pv
 rules:
   - apiGroups: [""]
-    resources: ["pods"]
-    verbs: ["list"]
+    resources: ["persistentvolumes"]
+    verbs: ["list", "patch"]
 ---
 # create clusterrolebinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: template-autoops-cronjob
+  name: auto-retain-pv
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: template-autoops-cronjob
+  name: auto-retain-pv
 subjects:
   - kind: ServiceAccount
-    name: template-autoops-cronjob
+    name: auto-retain-pv
     namespace: autoops
 ---
 # create cronjob
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: template-autoops-cronjob
+  name: auto-retain-pv
   namespace: autoops
 spec:
   schedule: "*/5 * * * *"
@@ -48,10 +48,10 @@ spec:
     spec:
       template:
         spec:
-          serviceAccount: template-autoops-cronjob
+          serviceAccount: auto-retain-pv
           containers:
-            - name: template-autoops-cronjob
-              image: autoops/template-autoops-cronjob
+            - name: auto-retain-pv
+              image: autoops/auto-retain-pv
           restartPolicy: OnFailure
 ```
 
